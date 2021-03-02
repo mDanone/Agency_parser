@@ -6,4 +6,4 @@ INSTRUCTIONS FOR WINDOWS
 3. Activate your environment with ' <name of environment you want>\Scripts\activate.bat if you use cmd or '...\activate.ps1' instead of  activate.bat if you use Powershell
 
 4. Install all pacgacges with command 'pip install -r requirements.txt'
-5. Run the scraper with command 'python agency_parser.py --filename=<name_of_file_to put data>.csv'
+5. Run the scraper with command 'python agency_parser.py --filename=<name_of_file_to put data>.csv' --startpage=<startpage> --endpage=<endpage>
