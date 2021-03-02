@@ -3,11 +3,14 @@ from selenium.webdriver.common.action_chains import ActionChains
 import csv
 import argparse
 import re
+import requests
 
 parser = argparse.ArgumentParser(description='file to put ads')
 parser.add_argument('--filename', type=str,help='file to put ads')
+parser.add_argument('--pages', type=int,help='file to put ads')
 args = parser.parse_args()
 filename = args.filename
+pages = args.pages
 
 PATH = "C:\\Users\\Computer\\Desktop\\chromedriver.exe"
 
@@ -16,8 +19,11 @@ driver = webdriver.Chrome(executable_path=PATH)
 driver.get('http://www.all-agency.ru/')
 list_of_hrefs = []
 # Количество страниц с объявлениями
-for i in range(1, 162):
-    driver.get('http://www.all-agency.ru/page/{}/'.format(i))
+for i in range(1, pages):
+    r = requests.get(f'http://www.all-agency.ru/page/{i}/')
+    if r.status_code == 404:
+        continue
+    driver.get(f'http://www.all-agency.ru/page/{i}/')
     posts = driver.find_elements_by_class_name('Post2')
     for post in posts:
         href = post.find_element_by_tag_name('a').get_attribute('href')
@@ -64,6 +70,9 @@ for i in range(1, 162):
             other_info = 'Нет дополнительной информации'
         with open(filename, 'a', encoding='utf-8') as f:
             writer = csv.writer(f)
+            writer.writerow(['Название', 'Регион', 'Метро', 'Адрес',
+                             'Почта', 'Сайт', 'Телефон', 'Ссылка', 
+                             'Дополнительная инофрмация'])
             writer.writerow([name, region, metro, 
                              address, email, site, 
                             phone, href, other_info])
