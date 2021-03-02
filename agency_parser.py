@@ -17,8 +17,8 @@ endpage = args.endpage
 PATH = "C:\\Users\\Computer\\Desktop\\chromedriver.exe"
 
 driver = webdriver.Chrome(executable_path=PATH)
-with open(filename, 'a', encoding='utf-8') as f:
-    writer = csv.writer(f)
+with open(filename, 'a', encoding='utf-8', newline='') as f:
+    writer = csv.writer(f, )
     writer.writerow(['Название', 'Регион', 'Метро', 'Адрес',
                                 'Почта', 'Сайт', 'Телефон', 'Ссылка', 
                                 'Дополнительная инофрмация'])
@@ -52,20 +52,23 @@ for i in range(startpage, endpage+1):
         # Ищем нужные нам данные по собранному тексту
         for data in splitted_info:
             if 'Регион:' in data:
-                region = data
+                region = data[8:]
             elif 'Метро:' in data:
-                metro = data
+                metro = data[6:]
             elif 'Адрес:' in data:
-                address = data
+                address = data[6:]
             elif 'E-mail:' in data:
-                email = data
-            elif 'Сайт:' in data or 'www' in data:
+                email = data[7:]
+            elif 'Сайт:' in data:
+                site = data[6:]
+            elif 'www' in data:
                 site = data
-
             # Используется много regexp так как номера телефонов выглядят по разному
-            elif 'Телефон:' in data or re.match(r'\d{3}-\d{3,4}', data) \
-                or re.match(r'\d{1}-\d{3}-\d{3}-\d{2}-\d{2}', data) \
-                or re.match(r'(\d{3})', data):
+            elif 'Телефон:' in data:
+                phone = data[9:]
+            elif re.findall(r'\d{3}-\d{3,4}', data) \
+                or re.findall(r'\d{1}-\d{3}-\d{3}-\d{2}-\d{2}', data) \
+                or re.findall(r'(\d{3})', data) or re.findall(r'(\d{4})', data):
                 phone = data
 
         # У некоторых объявлений нет дополнительной информации
@@ -74,7 +77,7 @@ for i in range(startpage, endpage+1):
         except IndexError:
             print('Нет дополнительной информации')
             other_info = 'Нет дополнительной информации'
-        with open(filename, 'a', encoding='utf-8') as f:
+        with open(filename, 'a', encoding='utf-8',newline='') as f:
             writer = csv.writer(f)
             writer.writerow([name, region, metro, 
                              address, email, site, 
