@@ -70,4 +70,5 @@ for i in range(1, 162):
 
     # Удаляем все ссылки с предыдущей страницы
     list_of_hrefs = []
+driver.quit()
 
