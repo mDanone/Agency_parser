@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 import csv
 import argparse
+import re
 
 parser = argparse.ArgumentParser(description='file to put ads')
 parser.add_argument('--filename', type=str,help='file to put ads')
@@ -10,18 +11,11 @@ filename = args.filename
 
 PATH = "C:\\Users\\Computer\\Desktop\\chromedriver.exe"
 
-'''
-   maininfo[0]: Регион, maininfo[1]: Метро
-   maininfo[2]: Название организации, 
-   maininfo[3]: Адрес, maininfo[4]: Телефон,
-   maininfo[5]: Email, maininfo[6]: Сайт
-'''
-
 driver = webdriver.Chrome(executable_path=PATH)
 
 driver.get('http://www.all-agency.ru/')
 list_of_hrefs = []
-
+# Количество страниц с объявлениями
 for i in range(1, 162):
     driver.get('http://www.all-agency.ru/page/{}/'.format(i))
     posts = driver.find_elements_by_class_name('Post2')
@@ -29,14 +23,21 @@ for i in range(1, 162):
         href = post.find_element_by_tag_name('a').get_attribute('href')
         list_of_hrefs.append(href)
         print(href)
+    # Проходимся по ссылкам на объявления
     for href in list_of_hrefs:
         driver.get(href)
         header = driver.find_element_by_class_name('PostHead')
         name = header.find_element_by_tag_name('h1').text
         info = driver.find_element_by_class_name('PostContent').text
+
+        # Отделяем кучу текста от основной информации
         splitted_info = info.split('Информация о компании:')[0].split('\n')
-        region, metro, address = 'Не указано', 'Не указано', 'Не указано'
-        email, phone, site = 'Не указано', 'Не указано', 'Не указано'
+        
+        # Заранее выставляем всем данным значение не указан что чтобы не прописывать else
+        region, metro, address = 'Регион не указан', 'Метро не указано', 'Адрес не указан'
+        email, phone, site = 'Почта не указана', 'Телефон не указан', 'Сайт не указан'
+
+        # Ищем нужные нам данные по собранному тексту
         for data in splitted_info:
             if 'Регион:' in data:
                 region = data
@@ -46,10 +47,15 @@ for i in range(1, 162):
                 address = data
             elif 'E-mail:' in data:
                 email = data
-            elif 'Сайт:' in data:
+            elif 'Сайт:' in data or 'www' in data:
                 site = data
-            elif 'Телефон:' in data:
+
+            # Используется много regexp так как номера телефонов выглядят по разному
+            elif 'Телефон:' in data or re.match(r'\d{3}-\d{4}', data) \
+                or re.match(r'\d{1}-\d{3}-\d{3}-\d{2}-\d{2}', data) \
+                or re.match(r'(\d{3})', data) or re.match(r'(\d{4})', data):
                 phone = data
+
         # У некоторых объявлений нет дополнительной информации
         try:
             other_info = ' '.join(info.split('Информация о компании:')[1].split('\n'))
@@ -61,5 +67,7 @@ for i in range(1, 162):
             writer.writerow([name, region, metro, 
                              address, email, site, 
                             phone, href, other_info])
-        list_of_hrefs = []
+
+    # Удаляем все ссылки с предыдущей страницы
+    list_of_hrefs = []
 
