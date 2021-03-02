@@ -17,7 +17,11 @@ endpage = args.endpage
 PATH = "C:\\Users\\Computer\\Desktop\\chromedriver.exe"
 
 driver = webdriver.Chrome(executable_path=PATH)
-
+with open(filename, 'a', encoding='utf-8') as f:
+    writer = csv.writer(f)
+    writer.writerow(['Название', 'Регион', 'Метро', 'Адрес',
+                                'Почта', 'Сайт', 'Телефон', 'Ссылка', 
+                                'Дополнительная инофрмация'])
 driver.get('http://www.all-agency.ru/')
 list_of_hrefs = []
 # Количество страниц с объявлениями
@@ -72,9 +76,6 @@ for i in range(startpage, endpage+1):
             other_info = 'Нет дополнительной информации'
         with open(filename, 'a', encoding='utf-8') as f:
             writer = csv.writer(f)
-            writer.writerow(['Название', 'Регион', 'Метро', 'Адрес',
-                             'Почта', 'Сайт', 'Телефон', 'Ссылка', 
-                             'Дополнительная инофрмация'])
             writer.writerow([name, region, metro, 
                              address, email, site, 
                             phone, href, other_info])
