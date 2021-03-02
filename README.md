@@ -1,7 +1,7 @@
 # Agency_parser
 INSTRUCTIONS FOR WINDOWS
 1. You need Python3 version .
-2. Install virtualenv (pip install virtualenv) inside the tabtouch folder and create it with command 'virtualenv <name of environment you want>
+2. Install virtualenv (pip install virtualenv) inside the tabtouch folder and create it with command 'virtualenv <name of environment you want>'
 
 3. Activate your environment with ' <name of environment you want>\Scripts\activate.bat if you use cmd or '...\activate.ps1' instead of  activate.bat if you use Powershell
 
