@@ -7,10 +7,12 @@ import requests
 
 parser = argparse.ArgumentParser(description='file to put ads')
 parser.add_argument('--filename', type=str,help='file to put ads')
-parser.add_argument('--pages', type=int,help='file to put ads')
+parser.add_argument('--startpage', type=int,help='file to put ads')
+parser.add_argument('--endpage', type=int,help='file to put ads')
 args = parser.parse_args()
 filename = args.filename
-pages = args.pages
+startpage = args.startpage
+endpage = args.endpage
 
 PATH = "C:\\Users\\Computer\\Desktop\\chromedriver.exe"
 
@@ -19,7 +21,7 @@ driver = webdriver.Chrome(executable_path=PATH)
 driver.get('http://www.all-agency.ru/')
 list_of_hrefs = []
 # Количество страниц с объявлениями
-for i in range(1, pages):
+for i in range(startpage, endpage+1):
     r = requests.get(f'http://www.all-agency.ru/page/{i}/')
     if r.status_code == 404:
         continue
