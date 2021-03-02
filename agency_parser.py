@@ -51,9 +51,9 @@ for i in range(1, 162):
                 site = data
 
             # Используется много regexp так как номера телефонов выглядят по разному
-            elif 'Телефон:' in data or re.match(r'\d{3}-\d{4}', data) \
+            elif 'Телефон:' in data or re.match(r'\d{3}-\d{3,4}', data) \
                 or re.match(r'\d{1}-\d{3}-\d{3}-\d{2}-\d{2}', data) \
-                or re.match(r'(\d{3})', data) or re.match(r'(\d{4})', data):
+                or re.match(r'(\d{3})', data):
                 phone = data
 
         # У некоторых объявлений нет дополнительной информации
